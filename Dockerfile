@@ -7,4 +7,4 @@ RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-key 5243CDED
 RUN apt-get update
 RUN apt-get install -qy libgles2-mesa-dev libraspberrypi0 kodi
 
-#CMD ["/usr/bin/kodi"]
+CMD ["/usr/bin/kodi"]
