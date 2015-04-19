@@ -10,6 +10,7 @@ RUN apt-get install -qy libgles2-mesa-dev libraspberrypi0 kodi
 
 # keyboard configuration
 ADD data/etc-udev-rules-10-permissions.rules /etc/udev/10-permissions.rules
+RUN addgroup --system input
 RUN usermod -a -G input kodi
 
 CMD ["/usr/bin/kodi"]
