@@ -20,7 +20,7 @@ RUN apt-get install -qy python python-pip
 RUN pip install envtpl
 
 # install development aids
-RUN apt-get install vim openssh-server
+RUN apt-get install -qy vim openssh-server
 
 # configure sshd
 ADD data/etc-ssh-sshd_config.tpl /etc/ssh/sshd_config.tpl
