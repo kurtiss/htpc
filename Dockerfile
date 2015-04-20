@@ -2,16 +2,27 @@ FROM resin/rpi-raspbian:wheezy
 MAINTAINER kurtiss <kurtiss@gmail.com>
 ENV DEBIAN_FRONTEND noninteractive
 
-# kodi dependencies
+# update sources for kodi
 ADD data/etc-apt-sources.list.d-mene.list /etc/apt/sources.list.d/mene.list
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-key 5243CDED
+
+# add the input group for kodi/keyboard
+RUN addgroup --system input
+
+# install kodi
 RUN apt-get update
 RUN apt-get install -qy libgles2-mesa-dev libraspberrypi0 kodi
 
-# keyboard configuration
-RUN addgroup --system input
+# further keyboard configuration
 ADD data/etc-udev-rules.d-99-input.rules /etc/udev/rules.d/99-input.rules
 ADD data/etc-udev-rules.d-10-permissions.rules /etc/udev/rules.d/10-permissions.rules
-RUN usermod -a -G input kodi
 
-CMD ["/usr/bin/kodi"]
+# add kodi to necessary groups
+RUN usermod -a -G audio kodi
+RUN usermod -a -G video kodi
+RUN usermod -a -G input kodi
+RUN usermod -a -G dialout kodi
+RUN usermod -a -G plugdev kodi
+RUN usermod -a -G tty kodi
+
+CMD ["/usr/bin/kodi-standalone"]
