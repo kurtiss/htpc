@@ -16,7 +16,7 @@ RUN apt-get update
 RUN apt-get install -qy libgles2-mesa-dev libraspberrypi0 kodi
 
 # install config aids
-RUN apt-get install -qy python
+RUN apt-get install -qy python python-pip
 RUN pip install envtpl
 
 # install development aids
