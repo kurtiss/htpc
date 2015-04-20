@@ -25,4 +25,7 @@ RUN usermod -a -G dialout kodi
 RUN usermod -a -G plugdev kodi
 RUN usermod -a -G tty kodi
 
+# configure kodi
+ADD data/usr-share-kodi-userdata-advancedsettings.xml /usr/share/kodi/userdata/advancedsettings.xml
+
 CMD ["/usr/bin/kodi-standalone"]

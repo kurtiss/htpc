@@ -1,0 +1,11 @@
+<advancedsettings>                                                              
+        <upnpannounce>true</upnpannounce>                                       
+        <upnprenderer>false</upnprenderer>                                      
+        <upnpserver>true</upnpserver>                                           
+        <webserver>true</webserver>                                             
+        <webserverport>8080</webserverport>                                     
+        <webserverusername>kodi</webserverusername>                             
+        <webserverpassword>kodi</webserverpassword>                             
+        <webskin>webinterface.default</webskin>                                 
+        <zeroconf>true</zeroconf>                                               
+</advancedsettings>
