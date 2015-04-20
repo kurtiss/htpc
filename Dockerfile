@@ -7,7 +7,7 @@ ADD data/etc-apt-sources.list.d-mene.list /etc/apt/sources.list.d/mene.list
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-key 5243CDED
 
 # add the input group for kodi/keyboard
-RUN addgroup --system input
+RUN groupadd --system input
 
 # install kodi
 RUN apt-get update
