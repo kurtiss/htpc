@@ -2,8 +2,6 @@ FROM resin/rpi-raspbian:wheezy
 MAINTAINER kurtiss <kurtiss@gmail.com>
 ENV DEBIAN_FRONTEND noninteractive
 
-# ENV SSHD_PORT 22
-
 # update sources for kodi
 ADD data/etc-apt-sources.list.d-mene.list /etc/apt/sources.list.d/mene.list
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-key 5243CDED
@@ -23,6 +21,7 @@ RUN pip install envtpl
 RUN apt-get install -qy vim openssh-server
 
 # configure sshd
+ENV SSHD_PORT 2222
 ADD data/etc-ssh-sshd_config.tpl /etc/ssh/sshd_config.tpl
 RUN envtpl /etc/ssh/sshd_config.tpl
 
@@ -37,6 +36,14 @@ RUN usermod -a -G input kodi
 RUN usermod -a -G dialout kodi
 RUN usermod -a -G plugdev kodi
 RUN usermod -a -G tty kodi
+
+# add root to necessary groups -- this may not be necessary
+RUN usermod -a -G audio root
+RUN usermod -a -G video root
+RUN usermod -a -G input root
+RUN usermod -a -G dialout root
+RUN usermod -a -G plugdev root
+RUN usermod -a -G tty root
 
 # configure kodi
 ADD data/usr-share-kodi-userdata-advancedsettings.xml /usr/share/kodi/userdata/advancedsettings.xml
