@@ -25,6 +25,10 @@ ENV SSHD_PORT 2222
 ADD data/etc-ssh-sshd_config.tpl /etc/ssh/sshd_config.tpl
 RUN envtpl /etc/ssh/sshd_config.tpl
 
+ENV SSH_AUTHORIZED_KEYS ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDKWOZfnF9wAPYGj2tphIGeKT45YQomMcL/IMf6Rma1AySq6L4+3rJTN4EdMHAc5T2z1+7kDSPtf395c6mGNIZCx2aBdo3VcmbNLA7dZstPBEDfCw12GgA60xb85ep2wOq3MUjZZqRiJ0pB1VpMu1mI7phQf51SX290TTCnX+98PMu85F4qXfRCzfVJ6usvsuBZZESFt5xcpoZs/2H4pHzrKqh99QyihFNCrOq8hGF+T8cfDMxSRJbkVhu3LYU1TbF/xheU0b67WqIzZkPfZ8Qs23LZYlAO7RFl3LUmzkwDLMbRvK3V/bvs9pQjsXlw42qmL6AlfvZjwDMdDV5fvZcN kurtiss
+ADD data/root-ssh-authorized_keys.tpl /root/.ssh/authorized_keys.tpl
+RUN envtpl /root/.ssh/authorized_keys.tpl
+
 # further keyboard configuration
 ADD data/etc-udev-rules.d-99-input.rules /etc/udev/rules.d/99-input.rules
 ADD data/etc-udev-rules.d-10-permissions.rules /etc/udev/rules.d/10-permissions.rules
