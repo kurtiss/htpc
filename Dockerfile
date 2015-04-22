@@ -38,7 +38,7 @@ ADD data/root-ssh-authorized_keys.tpl /root/.ssh/authorized_keys.tpl
 RUN envtpl /root/.ssh/authorized_keys.tpl
 
 # sshd - add sshd service as a startup service
-RUN update-rc.d ssh -f defaults
+# RUN update-rc.d ssh -f defaults
 
 # further keyboard configuration
 ADD data/etc-udev-rules.d-99-input.rules /etc/udev/rules.d/99-input.rules
