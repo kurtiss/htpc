@@ -2,15 +2,20 @@ FROM resin/rpi-raspbian:wheezy
 MAINTAINER kurtiss <kurtiss@gmail.com>
 ENV DEBIAN_FRONTEND noninteractive
 
-# update sources for kodi
+# kodi - update sources for kodi
 ADD data/etc-apt-sources.list.d-mene.list /etc/apt/sources.list.d/mene.list
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-key 5243CDED
 
-# add the input group for kodi/keyboard
+# kodi - add the input group for kodi/keyboard
 RUN groupadd --system input
 
-# install kodi
+# system - update package lists
 RUN apt-get update
+
+# sysklogd - install sysklogd
+RUN apt-get install -qy sysklogd
+
+# kodi - install kodi
 RUN apt-get install -qy libgles2-mesa-dev libraspberrypi0 kodi
 
 # install config aids
@@ -36,9 +41,6 @@ RUN envtpl /etc/ssh/sshd_config.tpl
 # sshd - add and render authorized keys file
 ADD data/root-ssh-authorized_keys.tpl /root/.ssh/authorized_keys.tpl
 RUN envtpl /root/.ssh/authorized_keys.tpl
-
-# sshd - add sshd service as a startup service
-# RUN update-rc.d ssh -f defaults
 
 # further keyboard configuration
 ADD data/etc-udev-rules.d-99-input.rules /etc/udev/rules.d/99-input.rules
