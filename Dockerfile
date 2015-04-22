@@ -51,6 +51,6 @@ RUN usermod -a -G plugdev root
 RUN usermod -a -G tty root
 
 # configure kodi
-ADD data/usr-share-kodi-userdata-advancedsettings.xml /usr/share/kodi/userdata/advancedsettings.xml
+# ADD data/usr-share-kodi-userdata-advancedsettings.xml /usr/share/kodi/userdata/advancedsettings.xml
 
 CMD ["/usr/bin/kodi-standalone"]
