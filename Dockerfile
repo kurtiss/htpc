@@ -12,11 +12,11 @@ RUN groupadd --system input
 # system - update package lists
 RUN apt-get update
 
-# sysklogd - install sysklogd
-RUN apt-get install -qy sysklogd
-
 # kodi - install kodi
 RUN apt-get install -qy libgles2-mesa-dev libraspberrypi0 kodi
+
+# sysklogd - install sysklogd
+RUN apt-get install -qy sysklogd
 
 # install config aids
 RUN apt-get install -qy python python-pip
