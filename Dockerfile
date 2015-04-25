@@ -3,16 +3,16 @@ MAINTAINER kurtiss <kurtiss@gmail.com>
 
 # baseimage - ENV
 ENV HOME /root
-ENV DEBIAN_FRONTEND nonint#eractive
+ENV DEBIAN_FRONTEND noninteractive
 
 # baseimage - add scripts
 ADD baseimage /build
 
 # baseimage - setup
 RUN /build/prepare.sh && \
-	/build/system_services.sh
-#	/build/utilities.sh && \
-#	/build/cleanup.sh
+	/build/system_services.sh && \
+	/build/utilities.sh && \
+	/build/cleanup.sh
 
 # kodi - update sources for kodi
 # ADD data/etc-apt-sources.list.d-mene.list /etc/apt/sources.list.d/mene.list
@@ -52,5 +52,5 @@ RUN /build/prepare.sh && \
 # Clean up APT when done.
 # RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-# CMD ["/sbin/my_init"]
-CMD ["/bin/bash"]
+CMD ["/sbin/my_init"]
+# CMD ["/bin/bash"]
