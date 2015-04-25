@@ -79,7 +79,7 @@ ENV DEBIAN_FRONTEND nonint#eractive
 # configure kodi
 # ADD data/usr-share-kodi-userdata-advancedsettings.xml /usr/share/kodi/userdata/advancedsettings.xml
 
-CMD ["/sbin/my_init"]
+CMD ["/bin/bash"]
 
 # CMD ["/usr/bin/kodi-standalone"]
 
