@@ -3,6 +3,7 @@ MAINTAINER kurtiss <kurtiss@gmail.com>
 
 # baseimage - ENV
 ENV HOME /root
+ENV DEBIAN_FRONTEND nonint#eractive
 
 # baseimage - add scripts
 ADD baseimage /build
@@ -13,8 +14,6 @@ RUN /build/prepare.sh
 #        /build/system_services.sh && \
 #        /build/utilities.sh && \
 #        /build/cleanup.sh
-
-ENV DEBIAN_FRONTEND nonint#eractive
 
 # kodi - update sources for kodi
 #ADD data/etc-apt-sources.list.d-mene.list /etc/apt/sources.list.d/mene.list
