@@ -10,7 +10,7 @@ ADD baseimage /build
 
 # baseimage - setup
 RUN /build/prepare.sh && \
-	/build/system_services.sh #&& \
+	/build/system_services.sh
 #	/build/utilities.sh && \
 #	/build/cleanup.sh
 
@@ -52,4 +52,5 @@ RUN /build/prepare.sh && \
 # Clean up APT when done.
 # RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-CMD ["/sbin/my_init"]
+# CMD ["/sbin/my_init"]
+CMD ["/bin/bash"]
