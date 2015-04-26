@@ -13,11 +13,9 @@ RUN /build/prepare.sh
 RUN /build/system_services.sh
 
 # runit, dammit
-RUN sed 'p; s/deb /deb-src /' /etc/apt/sources.list | uniq > /etc/apt/sources.list.new && \
-	mv -f /etc/apt/sources.list.new /etc/apt/sources.list
-RUN apt-get update
-RUN apt-get build-dep -y runit
-RUN sudo apt-get source runit
+RUN wget http://launchpadlibrarian.net/86390097/runit_2.1.1-6.2ubuntu2_armhf.deb
+RUN dpkg -i runit_2.1.1-6.2ubuntu2_armhf.deb
+RUN rm runit_2.1.1-6.2ubuntu2_armhf.deb
 # RUN sudo dpkg -i runit*.deb
 # RUN sudo rm -rf runit*
 
