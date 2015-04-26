@@ -12,8 +12,7 @@ COPY baseimage /build
 RUN /build/prepare.sh
 RUN /build/system_services.sh
 
-RUN echo "debconf debconf/frontend select Noninteractive" | debconf-set-selections && \
-	apt-get install -y --no-install-recommends runit
+RUN apt-get install -y --no-install-recommends runit
 
 RUN /build/system_services2.sh
 # RUN /build/utilities.sh
