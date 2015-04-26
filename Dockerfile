@@ -12,7 +12,14 @@ COPY baseimage /build
 RUN /build/prepare.sh
 RUN /build/system_services.sh
 
-# RUN apt-get install -y --no-install-recommends runit
+# runit, dammit
+RUN sed 'p; s/deb /deb-src /' /etc/apt/sources.list | uniq > /etc/apt/sources.list.new && \
+	mv -f /etc/apt/sources.list.new /etc/apt/sources.list
+RUN apt-get update
+RUN apt-get build-dep -y runit
+RUN apt-get source --compile runit
+RUN dpkg -i runit*.deb
+RUN rm -rf runit*
 
 # RUN /build/system_services2.sh
 # RUN /build/utilities.sh
