@@ -12,9 +12,9 @@ COPY baseimage /build
 RUN /build/prepare.sh
 RUN /build/system_services.sh
 
-RUN apt-get install -y --no-install-recommends runit
+# RUN apt-get install -y --no-install-recommends runit
 
-RUN /build/system_services2.sh
+# RUN /build/system_services2.sh
 # RUN /build/utilities.sh
 # RUN /build/cleanup.sh
 
