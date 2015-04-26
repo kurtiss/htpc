@@ -13,11 +13,10 @@ RUN /build/prepare.sh
 RUN /build/system_services.sh
 
 # runit, dammit
+RUN apt-get install wget
 RUN wget http://launchpadlibrarian.net/86390097/runit_2.1.1-6.2ubuntu2_armhf.deb
 RUN dpkg -i runit_2.1.1-6.2ubuntu2_armhf.deb
 RUN rm runit_2.1.1-6.2ubuntu2_armhf.deb
-# RUN sudo dpkg -i runit*.deb
-# RUN sudo rm -rf runit*
 
 # RUN /build/system_services2.sh
 # RUN /build/utilities.sh
