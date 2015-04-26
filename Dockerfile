@@ -17,9 +17,9 @@ RUN sed 'p; s/deb /deb-src /' /etc/apt/sources.list | uniq > /etc/apt/sources.li
 	mv -f /etc/apt/sources.list.new /etc/apt/sources.list
 RUN apt-get update
 RUN apt-get build-dep -y runit
-RUN apt-get source --compile runit
-RUN dpkg -i runit*.deb
-RUN rm -rf runit*
+RUN sudo apt-get source --compile runit
+RUN sudo dpkg -i runit*.deb
+RUN sudo rm -rf runit*
 
 # RUN /build/system_services2.sh
 # RUN /build/utilities.sh
