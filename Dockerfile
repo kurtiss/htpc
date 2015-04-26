@@ -6,13 +6,13 @@ ENV HOME /root
 ENV DEBIAN_FRONTEND noninteractive
 
 # baseimage - add scripts
-ADD baseimage /build
+COPY baseimage /build
 
 # baseimage - setup
-RUN /build/prepare.sh && \
-	/build/system_services.sh && \
-	/build/utilities.sh && \
-	/build/cleanup.sh
+RUN /build/prepare.sh
+RUN /build/system_services.sh
+# RUN /build/utilities.sh
+# RUN /build/cleanup.sh
 
 # kodi - update sources for kodi
 # ADD data/etc-apt-sources.list.d-mene.list /etc/apt/sources.list.d/mene.list
@@ -52,5 +52,5 @@ RUN /build/prepare.sh && \
 # Clean up APT when done.
 # RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
-CMD ["/sbin/my_init"]
-# CMD ["/bin/bash"]
+# CMD ["/sbin/my_init"]
+CMD ["/bin/bash"]
