@@ -13,7 +13,9 @@ RUN /build/prepare.sh
 RUN /build/system_services.sh
 
 
-RUN sudo DEBIAN_FRONTEND=noninteractive /bin/sh -c "apt-get install -qy --no-install-recommends runit"
+RUN echo "debconf debconf/frontend select Teletype" | debconf-set-selections &&
+	apt-get install -y --no-install-recommends runit
+
 RUN /build/system_services2.sh
 # RUN /build/utilities.sh
 # RUN /build/cleanup.sh
