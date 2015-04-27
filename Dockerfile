@@ -55,4 +55,4 @@ RUN chmod +x /etc/service/kodi/run
 
 RUN /build/cleanup.sh
 
-CMD ["/bin/bash"]
+CMD ["/sbin/my_init"]

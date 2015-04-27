@@ -16,6 +16,9 @@ chown :docker_env /etc/container_environment.sh /etc/container_environment.json
 chmod 640 /etc/container_environment.sh /etc/container_environment.json
 ln -s /etc/container_environment.sh /etc/profile.d/
 
+# Install python3 - required by my_init and set_user
+$minimal_apt_get_install python3
+
 # Install runit + hack
 $minimal_apt_get_install wget
 wget http://launchpadlibrarian.net/86390097/runit_2.1.1-6.2ubuntu2_armhf.deb
