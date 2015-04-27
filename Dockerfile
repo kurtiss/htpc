@@ -15,6 +15,7 @@ RUN /build/prepare.sh && \
 
 # kodi - update sources for kodi
 ADD data/etc-apt-sources.list.d-mene.list /etc/apt/sources.list.d/mene.list
+RUN apt-get update
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-key 5243CDED
 
 # kodi - add the input group for kodi/keyboard
