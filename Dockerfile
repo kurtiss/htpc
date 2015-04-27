@@ -45,6 +45,11 @@ RUN usermod -a -G dialout kodi
 RUN usermod -a -G plugdev kodi
 RUN usermod -a -G tty kodi
 
+# kodi - init
+RUN mkdir -p /etc/service/kodi
+ADD data/etc-service-kodi-run /etc/service/kodi/run
+RUN chmod +x /etc/service/kodi/run
+
 # configure kodi
 # ADD data/usr-share-kodi-userdata-advancedsettings.xml /usr/share/kodi/userdata/advancedsettings.xml
 
