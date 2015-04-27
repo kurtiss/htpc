@@ -25,7 +25,7 @@ RUN groupadd --system input
 RUN apt-get install -y --no-install-recommends libgles2-mesa-dev libraspberrypi0 kodi
 
 # install config aids
-RUN apt-get install -y --no-install-recommnds python python-pip
+RUN apt-get install -y --no-install-recommends python python-pip
 RUN pip install envtpl
 
 # TODO: sshd - configure authorized keys
