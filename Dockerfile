@@ -25,10 +25,12 @@ RUN groupadd --system input
 RUN apt-get install -y --no-install-recommends libgles2-mesa-dev libraspberrypi0 kodi
 
 # install config aids
-RUN apt-get install -y --no-install-recommends python python-pip
+RUN apt-get install -y --no-install-recommnds python python-pip
 RUN pip install envtpl
 
-# TODO: sshd - configure authorized keys
+# sshd
+RUN rm -f /etc/service/sshd/down
+RUN /etc/my_init.d/00_regen_ssh_host_keys.sh
 ENV SSH_AUTHORIZED_KEYS ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDKWOZfnF9wAPYGj2tphIGeKT45YQomMcL/IMf6Rma1AySq6L4+3rJTN4EdMHAc5T2z1+7kDSPtf395c6mGNIZCx2aBdo3VcmbNLA7dZstPBEDfCw12GgA60xb85ep2wOq3MUjZZqRiJ0pB1VpMu1mI7phQf51SX290TTCnX+98PMu85F4qXfRCzfVJ6usvsuBZZESFt5xcpoZs/2H4pHzrKqh99QyihFNCrOq8hGF+T8cfDMxSRJbkVhu3LYU1TbF/xheU0b67WqIzZkPfZ8Qs23LZYlAO7RFl3LUmzkwDLMbRvK3V/bvs9pQjsXlw42qmL6AlfvZjwDMdDV5fvZcN kurtiss
 
 # further keyboard configuration
