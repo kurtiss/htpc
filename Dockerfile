@@ -22,7 +22,7 @@ RUN apt-get update
 RUN groupadd --system input
 
 # kodi - install kodi
-RUN apt-get install -y --no-install-recommends --force-yes libgles2-mesa-dev libraspberrypi0 kodi
+RUN apt-get install -y --no-install-recommends libgles2-mesa-dev libraspberrypi0 kodi
 
 # install config aids
 RUN apt-get install -y --no-install-recommnds python python-pip
