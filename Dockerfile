@@ -16,6 +16,8 @@ RUN /build/prepare.sh && \
 # kodi - update sources for kodi
 ADD data/etc-apt-sources.list.d-mene.list /etc/apt/sources.list.d/mene.list
 RUN apt-key adv --keyserver keyserver.ubuntu.com --recv-key 5243CDED
+ADD data/etc-apt-sources.list.d-foundation.list /etc/apt/sources.list.d/foundation.list
+RUN apt-key adv --fetch-keys http://archive.raspberrypi.org/debian/raspberrypi.gpg.key
 RUN apt-get update
 
 # kodi - add the input group for kodi/keyboard
@@ -25,7 +27,7 @@ RUN groupadd --system input
 RUN apt-get install -y --no-install-recommends libgles2-mesa-dev libraspberrypi0 kodi
 
 # x11
-RUN apt-get install -y --no-install-recommends xinit
+RUN apt-get install -y --no-install-recommends libgl1-mesa-dri xinit xserver-xorg xserver-xorg-video-fbturbo
 RUN sed -i 's/allowed_users.*/allowed_users=anybody/g' /etc/X11/Xwrapper.config
 
 # install config aids
@@ -45,7 +47,10 @@ ADD data/etc-udev-rules.d-10-permissions.rules /etc/udev/rules.d/10-permissions.
 # usbmount
 RUN apt-get install -y --no-install-recommends usbmount
 
-# add kodi to necessary groups
+# kodi - permissions
+RUN chgrp video /dev/vchiq
+RUN chmod 660 /dev/vchiq
+
 RUN usermod -a -G audio kodi
 RUN usermod -a -G video kodi
 RUN usermod -a -G input kodi

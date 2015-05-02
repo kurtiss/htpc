@@ -1,3 +1,3 @@
 #!/bin/sh
 
-exec /sbin/setuser kodi /usr/bin/kodi-standalone
+exec /sbin/setuser kodi xinit /usr/bin/kodi-standalone
