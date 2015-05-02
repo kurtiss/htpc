@@ -24,6 +24,10 @@ RUN groupadd --system input
 # kodi - install kodi
 RUN apt-get install -y --no-install-recommends libgles2-mesa-dev libraspberrypi0 kodi
 
+# x11
+RUN apt-get install -u --no-install-recommends xinit
+RUN sed -i 's/allowed_users.*/allowed_users=anybody/g' /etc/X11/Xwrapper.config
+
 # install config aids
 RUN apt-get install -y --no-install-recommends python python-pip
 RUN pip install envtpl
@@ -31,12 +35,15 @@ RUN pip install envtpl
 # sshd
 RUN rm -f /etc/service/sshd/down
 ENV SSH_AUTHORIZED_KEYS ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDKWOZfnF9wAPYGj2tphIGeKT45YQomMcL/IMf6Rma1AySq6L4+3rJTN4EdMHAc5T2z1+7kDSPtf395c6mGNIZCx2aBdo3VcmbNLA7dZstPBEDfCw12GgA60xb85ep2wOq3MUjZZqRiJ0pB1VpMu1mI7phQf51SX290TTCnX+98PMu85F4qXfRCzfVJ6usvsuBZZESFt5xcpoZs/2H4pHzrKqh99QyihFNCrOq8hGF+T8cfDMxSRJbkVhu3LYU1TbF/xheU0b67WqIzZkPfZ8Qs23LZYlAO7RFl3LUmzkwDLMbRvK3V/bvs9pQjsXlw42qmL6AlfvZjwDMdDV5fvZcN
-ADD data/root-ssh-authorized_keys.tpl /root/ssh/authorized_keys.tpl
-RUN envtpl /root/ssh/authorized_keys.tpl
+ADD data/root-ssh-authorized_keys.tpl /root/.ssh/authorized_keys.tpl
+RUN envtpl /root/.ssh/authorized_keys.tpl
 
 # further keyboard configuration
 ADD data/etc-udev-rules.d-99-input.rules /etc/udev/rules.d/99-input.rules
 ADD data/etc-udev-rules.d-10-permissions.rules /etc/udev/rules.d/10-permissions.rules
+
+# usbmount
+RUN apt-get install -y --no-install-recommends usbmount
 
 # add kodi to necessary groups
 RUN usermod -a -G audio kodi
