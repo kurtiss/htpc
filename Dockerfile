@@ -48,8 +48,8 @@ ADD data/etc-udev-rules.d-10-permissions.rules /etc/udev/rules.d/10-permissions.
 RUN apt-get install -y --no-install-recommends usbmount
 
 # kodi - permissions
-RUN chgrp video /dev/vchiq
-RUN chmod 660 /dev/vchiq
+# RUN chgrp video /dev/vchiq
+# RUN chmod 660 /dev/vchiq
 
 RUN usermod -a -G audio kodi
 RUN usermod -a -G video kodi
