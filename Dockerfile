@@ -25,7 +25,7 @@ RUN groupadd --system input
 RUN apt-get install -y --no-install-recommends libgles2-mesa-dev libraspberrypi0 kodi
 
 # x11
-RUN apt-get install -u --no-install-recommends xinit
+RUN apt-get install -y --no-install-recommends xinit
 RUN sed -i 's/allowed_users.*/allowed_users=anybody/g' /etc/X11/Xwrapper.config
 
 # install config aids
