@@ -46,6 +46,29 @@ ADD data/etc-udev-rules.d-10-permissions.rules /etc/udev/rules.d/10-permissions.
 
 # usbmount
 RUN apt-get install -y --no-install-recommends usbmount
+ADD data/etc-usbmount-usbmount.conf /etc/usbmount/usbmount.conf
+
+# pyload - install dependencies
+RUN apt-get install -y --no-install-recommends build-essential bsdtar expect gdebi git \
+	libev-dev libffi-dev libssl-dev python-crypto python-dev python-pip python-pycurl \
+	rhino tesseract-ocr unrar-free wget
+
+# pyload - install pypi dependencies
+RUN pip install Beaker BeautifulSoup bjoern bottle feedparser \
+	https://pypi.python.org/packages/source/g/getch/getch-1.0-python2.tar.gz#md5=586ea0f1f16aa094ff6a30736ba03c50 \
+	jinja2 MultipartPostHandler pillow pyOpenSSL simplejson thrift
+
+# pyload - install
+RUN mkdir -p /root/pyload && wget -qO- http://download.pyload.org/pyload-src-v0.4.9.zip | bsdtar -xvf- -C /root
+ADD data/root-.pyload-config /root/.pyload/config
+ADD data/tmp-install_pyload.sh /tmp/install_pyload.sh
+RUN chmod +x /tmp/install_pyload.sh && /tmp/install_pyload.sh
+RUN rm /tmp/install_pyload.sh
+
+# pyload - init
+RUN mkdir -p /etc/service/pyload
+ADD data/etc-service-pyload-run /etc/service/pyload/run
+RUN chmod +x /etc/service/pyload/run
 
 # kodi - permissions
 # RUN chgrp video /dev/vchiq
@@ -62,6 +85,7 @@ RUN usermod -a -G tty kodi
 # RUN mkdir -p /etc/service/kodi
 # ADD data/etc-service-kodi-run /etc/service/kodi/run
 # RUN chmod +x /etc/service/kodi/run
+# exec su -c "xinit /usr/bin/kodi-standalone -- -nocursor :0" $USER
 
 # configure kodi
 # ADD data/usr-share-kodi-userdata-advancedsettings.xml /usr/share/kodi/userdata/advancedsettings.xml
