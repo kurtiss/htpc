@@ -1,3 +1,5 @@
 #!/bin/sh
 
-exec /sbin/setuser kodi xinit /usr/bin/kodi-standalone
+chgrp video /dev/vchiq
+chmod 660 /dev/vchiq
+exec /sbin/setuser kodi xinit /usr/bin/kodi-standalone -- -nocursor

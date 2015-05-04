@@ -71,9 +71,6 @@ ADD data/etc-service-pyload-run /etc/service/pyload/run
 RUN chmod +x /etc/service/pyload/run
 
 # kodi - permissions
-# RUN chgrp video /dev/vchiq
-# RUN chmod 660 /dev/vchiq
-
 RUN usermod -a -G audio kodi
 RUN usermod -a -G video kodi
 RUN usermod -a -G input kodi
@@ -81,11 +78,11 @@ RUN usermod -a -G dialout kodi
 RUN usermod -a -G plugdev kodi
 RUN usermod -a -G tty kodi
 
-# TODO: kodi - init
-# RUN mkdir -p /etc/service/kodi
-# ADD data/etc-service-kodi-run /etc/service/kodi/run
-# RUN chmod +x /etc/service/kodi/run
-# exec su -c "xinit /usr/bin/kodi-standalone -- -nocursor :0" $USER
+# kodi - init
+RUN mkdir -p /etc/service/kodi
+ADD data/etc-service-kodi-run /etc/service/kodi/run
+RUN chmod +x /etc/service/kodi/run
+RUN touch /etc/service/kodi/down
 
 # configure kodi
 # ADD data/usr-share-kodi-userdata-advancedsettings.xml /usr/share/kodi/userdata/advancedsettings.xml
