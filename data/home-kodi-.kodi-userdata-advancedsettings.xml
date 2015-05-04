@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<advancedsettings>
+	<network>
+		<buffermode>1</buffermode> <!-- Comment: Default is 1 -->
+		<cachemembuffersize>0</cachemembuffersize> <!-- Comment: Default is 20971520 bytes or 20 MB -->
+		<readbufferfactor>4.0</readbufferfactor> <!-- Comment: Default is 1.0 -->
+	</network>
+</advancedsettings>
