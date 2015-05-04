@@ -59,11 +59,12 @@ RUN pip install Beaker BeautifulSoup bjoern bottle feedparser \
 	jinja2 MultipartPostHandler pillow pyOpenSSL simplejson thrift
 
 # pyload - install
+# ENV PYLOAD_USERNAME pyload
+# ENV PYLOAD_PASSWORD pyload
 RUN mkdir -p /root/pyload && wget -qO- http://download.pyload.org/pyload-src-v0.4.9.zip | bsdtar -xvf- -C /root
 ADD data/root-.pyload-config /root/.pyload/config
 ADD data/tmp-install_pyload.sh /tmp/install_pyload.sh
-RUN chmod +x /tmp/install_pyload.sh && /tmp/install_pyload.sh
-RUN rm /tmp/install_pyload.sh
+RUN chmod +x /tmp/install_pyload.sh && /tmp/install_pyload.sh && rm /tmp/install_pyload.sh
 
 # pyload - init
 RUN mkdir -p /etc/service/pyload
@@ -93,6 +94,7 @@ RUN chmod +x /etc/service/udevd/run
 RUN sudo -u kodi sh -c "mkdir -p /home/kodi/.kodi/userdata"
 ADD data/home-kodi-.kodi-userdata-advancedsettings.xml /home/kodi/.kodi/userdata/advancedsettings.xml
 RUN chown kodi /home/kodi/.kodi/userdata/advancedsettings.xml
+RUN chgrp nogroup /home/kodi/.kodi/userdata/advancedsettings.xml
 
 RUN /build/cleanup.sh
 

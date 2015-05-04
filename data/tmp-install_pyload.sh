@@ -1,7 +1,7 @@
 #!/bin/bash
 
-export PYLOAD_USERNAME=pyload
-export PYLOAD_PASSWORD=pyload
+: ${PYLOAD_USERNAME?"PYLOAD_USERNAME must be defined."}
+: ${PYLOAD_PASSWORD?"PYLOAD_PASSWORD must be defined."}
 
 # Set username and password
 expect <<"EOF"
@@ -19,6 +19,3 @@ expect <<"EOF"
     send "4\r"
     expect eof
 EOF
-
-unset PYLOAD_USERNAME
-unset PYLOAD_PASSWORD
