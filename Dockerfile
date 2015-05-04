@@ -90,7 +90,7 @@ ADD data/etc-service-udevd-run /etc/service/udevd/run
 RUN chmod +x /etc/service/udevd/run
 
 # configure kodi
-RUN exec /sbin/setuser kodi "mkdir -p /home/kodi/.kodi/userdata"
+RUN /sbin/setuser kodi "mkdir -p /home/kodi/.kodi/userdata"
 ADD data/home-kodi-.kodi-userdata-advancedsettings.xml /home/kodi/.kodi/userdata/advancedsettings.xml
 RUN chown kodi /home/kodi/.kodi/userdata/advancedsettings.xml
 
