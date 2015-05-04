@@ -59,12 +59,8 @@ RUN pip install Beaker BeautifulSoup bjoern bottle feedparser \
 	jinja2 MultipartPostHandler pillow pyOpenSSL simplejson thrift
 
 # pyload - install
-ENV PYLOAD_USERNAME pyload
-ENV PYLOAD_PASSWORD pyload
 RUN mkdir -p /root/pyload && wget -qO- http://download.pyload.org/pyload-src-v0.4.9.zip | bsdtar -xvf- -C /root
 ADD data/root-.pyload-config /root/.pyload/config
-ADD data/tmp-install_pyload.sh /tmp/install_pyload.sh
-RUN chmod +x /tmp/install_pyload.sh && /tmp/install_pyload.sh && rm /tmp/install_pyload.sh
 
 # pyload - init
 RUN mkdir -p /etc/service/pyload
