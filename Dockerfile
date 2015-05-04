@@ -82,9 +82,9 @@ RUN chmod +x /etc/service/kodi/run
 RUN touch /etc/service/kodi/down
 
 # udevd - init
-RUN mkdir -p /etc/service/udevd
-ADD data/etc-service-udevd-run /etc/service/udevd/run
-RUN chmod +x /etc/service/udevd/run
+# RUN mkdir -p /etc/service/udevd
+# ADD data/etc-service-udevd-run /etc/service/udevd/run
+# RUN chmod +x /etc/service/udevd/run
 
 # configure kodi
 RUN sudo -u kodi sh -c "mkdir -p /home/kodi/.kodi/userdata"
