@@ -84,6 +84,11 @@ ADD data/etc-service-kodi-run /etc/service/kodi/run
 RUN chmod +x /etc/service/kodi/run
 RUN touch /etc/service/kodi/down
 
+# udevd - init
+RUN mkdir -p /etc/service/udevd
+ADD data/etc-service-udevd-run /etc/service/udevd/run
+RUN chmod +x /etc/service/udevd/run
+
 # configure kodi
 # ADD data/usr-share-kodi-userdata-advancedsettings.xml /usr/share/kodi/userdata/advancedsettings.xml
 
