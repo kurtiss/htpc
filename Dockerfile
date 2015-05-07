@@ -40,13 +40,14 @@ ENV SSH_AUTHORIZED_KEYS ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDKWOZfnF9wAPYGj2tp
 ADD data/root-ssh-authorized_keys.tpl /root/.ssh/authorized_keys.tpl
 RUN envtpl /root/.ssh/authorized_keys.tpl
 
-# further keyboard configuration
-ADD data/etc-udev-rules.d-99-input.rules /etc/udev/rules.d/99-input.rules
+# udev configuration
+ADD data/etc-udev-rules.d-99-input.rules.tpl /etc/udev/rules.d/99-input.rules.tpl
+RUN envtpl /etc/udev/rules.d/99-input.rules.tpl
 ADD data/etc-udev-rules.d-10-permissions.rules /etc/udev/rules.d/10-permissions.rules
 
-# usbmount
-RUN apt-get install -y --no-install-recommends usbmount
-ADD data/etc-usbmount-usbmount.conf /etc/usbmount/usbmount.conf
+# fstab
+ADD data/etc-fstab.tpl /etc/fstab.tpl
+RUN envtpl /etc/fstab.tpl
 
 # pyload - install dependencies
 RUN apt-get install -y --no-install-recommends build-essential bsdtar expect gdebi git \
@@ -82,9 +83,10 @@ RUN chmod +x /etc/service/kodi/run
 RUN touch /etc/service/kodi/down
 
 # udevd - init
-# RUN mkdir -p /etc/service/udevd
-# ADD data/etc-service-udevd-run /etc/service/udevd/run
-# RUN chmod +x /etc/service/udevd/run
+RUN mkdir -p /etc/service/udevd
+ADD data/etc-service-udevd-run /etc/service/udevd/run
+RUN chmod +x /etc/service/udevd/run
+RUN touch /etc/service/udevd/down
 
 # configure kodi
 RUN sudo -u kodi sh -c "mkdir -p /home/kodi/.kodi/userdata"
