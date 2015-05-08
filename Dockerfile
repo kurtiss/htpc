@@ -64,9 +64,10 @@ RUN mkdir -p /root/pyload && wget -qO- http://download.pyload.org/pyload-src-v0.
 ADD data/root-.pyload-config /root/.pyload/config
 
 # pyload - init
-RUN mkdir -p /etc/service/pyload
-ADD data/etc-service-pyload-run /etc/service/pyload/run
-RUN chmod +x /etc/service/pyload/run
+RUN mkdir -p /etc/sv/pyload
+ADD data/etc-sv-pyload-run /etc/sv/pyload/run
+RUN chmod +x /etc/sv/pyload/run
+RUN ln -s /etc/sv/pyload /etc/service/pyload
 
 # kodi - permissions
 RUN usermod -a -G audio kodi
@@ -77,16 +78,21 @@ RUN usermod -a -G plugdev kodi
 RUN usermod -a -G tty kodi
 
 # kodi - init
-RUN mkdir -p /etc/service/kodi
-ADD data/etc-service-kodi-run /etc/service/kodi/run
-RUN chmod +x /etc/service/kodi/run
-RUN touch /etc/service/kodi/down
+RUN mkdir -p /etc/sv/kodi
+ADD data/etc-sv-kodi-run /etc/sv/kodi/run
+RUN chmod +x /etc/sc/kodi/run
+RUN ln -s /etc/sv/kodi /etc/service/kodi
+RUN touch /etc/sc/kodi/down
 
 # udevd - init
-RUN mkdir -p /etc/service/udevd
-ADD data/etc-service-udevd-run /etc/service/udevd/run
-RUN chmod +x /etc/service/udevd/run
-RUN touch /etc/service/udevd/down
+RUN mkdir -p /etc/sv/udevd
+ADD data/etc-sv-udevd-run /etc/sv/udevd/run
+RUN chmod +x /etc/sv/udevd/run
+RUN mkdir -p /etc/sv/udevd/log
+ADD data/etc-sv-udevd-log-run /etc/sv/udevd/log/run
+RUN chmod +x /etc/sv/udevd/log/run
+RUN touch /etc/sv/udevd/down
+RUN ln -s /etc/sv/udevd /etc/service/udevd
 
 # configure kodi
 RUN sudo -u kodi sh -c "mkdir -p /home/kodi/.kodi/userdata"

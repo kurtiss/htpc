@@ -21,4 +21,4 @@ expect <<"EOF"
 EOF
 
 rm -f /root/.pyload/config/pyload.pid
-python /root/pyload/pyLoadCore.py --configdir=/root/.pyload/config
+exec python /root/pyload/pyLoadCore.py --configdir=/root/.pyload/config
