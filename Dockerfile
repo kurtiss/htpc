@@ -80,9 +80,9 @@ RUN usermod -a -G tty kodi
 # kodi - init
 RUN mkdir -p /etc/sv/kodi
 ADD data/etc-sv-kodi-run /etc/sv/kodi/run
-RUN chmod +x /etc/sc/kodi/run
+RUN chmod +x /etc/sv/kodi/run
+RUN touch /etc/sv/kodi/down
 RUN ln -s /etc/sv/kodi /etc/service/kodi
-RUN touch /etc/sc/kodi/down
 
 # udevd - init
 RUN mkdir -p /etc/sv/udevd
