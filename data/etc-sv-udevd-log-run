@@ -1,4 +1,4 @@
 #!/bin/sh
 
-mkdir -p /var/log/udevd
+exec mkdir -p /var/log/udevd
 exec svlogd -tt /var/log/udevd

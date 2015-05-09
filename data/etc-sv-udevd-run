@@ -1,3 +1,4 @@
 #!/bin/sh
 
-exec /sbin/udevd --children-max=2 --verbose
+exec 2>&1
+exec /sbin/udevd --children-max=2
