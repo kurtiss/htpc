@@ -91,8 +91,15 @@ RUN chmod +x /etc/sv/udevd/run
 RUN mkdir -p /etc/sv/udevd/log
 ADD data/etc-sv-udevd-log-run /etc/sv/udevd/log/run
 RUN chmod +x /etc/sv/udevd/log/run
-RUN touch /etc/sv/udevd/down
+# RUN touch /etc/sv/udevd/down
 RUN ln -s /etc/sv/udevd /etc/service/udevd
+
+# udevinit - init
+RUN mkdir -p /etc/sv/udevinit
+ADD data/etc-sv-udevinit-run /etc/sv/udevinit/run
+RUN chmod +x /etc/sv/udevinit/run
+# RUN touch /etc/sv/udevinit/down
+RUN ln -s /etc/sv/udevinit /etc/service/udevinit
 
 # configure kodi
 RUN sudo -u kodi sh -c "mkdir -p /home/kodi/.kodi/userdata"
