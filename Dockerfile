@@ -36,18 +36,14 @@ RUN pip install envtpl
 
 # sshd
 RUN rm -f /etc/service/sshd/down
-ENV SSH_AUTHORIZED_KEYS ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAABAQDKWOZfnF9wAPYGj2tphIGeKT45YQomMcL/IMf6Rma1AySq6L4+3rJTN4EdMHAc5T2z1+7kDSPtf395c6mGNIZCx2aBdo3VcmbNLA7dZstPBEDfCw12GgA60xb85ep2wOq3MUjZZqRiJ0pB1VpMu1mI7phQf51SX290TTCnX+98PMu85F4qXfRCzfVJ6usvsuBZZESFt5xcpoZs/2H4pHzrKqh99QyihFNCrOq8hGF+T8cfDMxSRJbkVhu3LYU1TbF/xheU0b67WqIzZkPfZ8Qs23LZYlAO7RFl3LUmzkwDLMbRvK3V/bvs9pQjsXlw42qmL6AlfvZjwDMdDV5fvZcN
 ADD data/root-ssh-authorized_keys.tpl /root/.ssh/authorized_keys.tpl
-RUN envtpl /root/.ssh/authorized_keys.tpl
 
 # udev configuration
 ADD data/etc-udev-rules.d-99-input.rules.tpl /etc/udev/rules.d/99-input.rules.tpl
-RUN envtpl /etc/udev/rules.d/99-input.rules.tpl
 ADD data/etc-udev-rules.d-10-permissions.rules /etc/udev/rules.d/10-permissions.rules
 
 # fstab
 ADD data/etc-fstab.tpl /etc/fstab.tpl
-RUN envtpl /etc/fstab.tpl
 
 # pyload - install dependencies
 RUN apt-get install -y --no-install-recommends build-essential bsdtar expect gdebi git \
@@ -68,6 +64,9 @@ RUN mkdir -p /etc/sv/pyload
 ADD data/etc-sv-pyload-run /etc/sv/pyload/run
 RUN chmod +x /etc/sv/pyload/run
 RUN ln -s /etc/sv/pyload /etc/service/pyload
+
+# usbutils
+RUN apt-get intall -u --no-install-recommends usbutils
 
 # kodi - permissions
 RUN usermod -a -G audio kodi
@@ -106,6 +105,11 @@ RUN sudo -u kodi sh -c "mkdir -p /home/kodi/.kodi/userdata"
 ADD data/home-kodi-.kodi-userdata-advancedsettings.xml /home/kodi/.kodi/userdata/advancedsettings.xml
 RUN chown kodi /home/kodi/.kodi/userdata/advancedsettings.xml
 RUN chgrp nogroup /home/kodi/.kodi/userdata/advancedsettings.xml
+
+# oninit
+RUN mkdir -p /etc/my_init.d
+ADD data/etc-my_init.d-onint /etc/my_init.d/oninit
+RUN chmod +x /etc/my_init.d/oninit
 
 RUN /build/cleanup.sh
 
