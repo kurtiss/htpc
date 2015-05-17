@@ -108,7 +108,7 @@ RUN chgrp nogroup /home/kodi/.kodi/userdata/advancedsettings.xml
 
 # oninit
 RUN mkdir -p /etc/my_init.d
-ADD data/etc-my_init.d-onint /etc/my_init.d/oninit
+ADD data/etc-my_init.d-oninit /etc/my_init.d/oninit
 RUN chmod +x /etc/my_init.d/oninit
 
 RUN /build/cleanup.sh
