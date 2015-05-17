@@ -66,7 +66,7 @@ RUN chmod +x /etc/sv/pyload/run
 RUN ln -s /etc/sv/pyload /etc/service/pyload
 
 # usbutils
-RUN apt-get install -u --no-install-recommends usbutils
+RUN apt-get install -y --no-install-recommends usbutils
 
 # kodi - permissions
 RUN usermod -a -G audio kodi
