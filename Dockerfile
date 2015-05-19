@@ -39,8 +39,11 @@ RUN rm -f /etc/service/sshd/down
 ADD data/root-ssh-authorized_keys.tpl /root/.ssh/authorized_keys.tpl
 
 # udev configuration
-ADD data/etc-udev-rules.d-99-input.rules.tpl /etc/udev/rules.d/99-input.rules.tpl
+ADD data/etc-udev-rules.d-99-input.rules/etc/udev/rules.d/99-input.rules
+ADD data/etc-udev-rules.d-96-usb.rules.tpl /etc/udev/rules.d/96-usb.rules.tpl
 ADD data/etc-udev-rules.d-10-permissions.rules /etc/udev/rules.d/10-permissions.rules
+ADD data/etc-udev-rules.d-mount.sh /etc/udev/rules.d/mount.sh
+RUN chmod +x /etc/udev/rules.d/mount.sh
 
 # fstab
 ADD data/etc-fstab.tpl /etc/fstab.tpl
