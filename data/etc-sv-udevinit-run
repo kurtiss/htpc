@@ -1,6 +1,6 @@
 #!/bin/sh
 
 sv start udevd || exit 1
-exec /sbin/udevadm trigger --action=add
-exec /sbin/udevadm settle
-sv stop udevinit
+/sbin/udevadm trigger --action=add
+/sbin/udevadm settle
+exec sleep infinity

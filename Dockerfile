@@ -100,7 +100,7 @@ RUN ln -s /etc/sv/udevd /etc/service/udevd
 RUN mkdir -p /etc/sv/udevinit
 ADD data/etc-sv-udevinit-run /etc/sv/udevinit/run
 RUN chmod +x /etc/sv/udevinit/run
-RUN touch /etc/sv/udevinit/down
+# RUN touch /etc/sv/udevinit/down
 RUN ln -s /etc/sv/udevinit /etc/service/udevinit
 
 # configure kodi
