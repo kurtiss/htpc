@@ -1,5 +1,6 @@
 #!/bin/sh
+
 sv start udevd || exit 1
-exec /sbin/udevadm trigger --action=add --type=subsystems
-exec /sbin/udevadm trigger --action=add --type=devices
+exec /sbin/udevadm trigger --action=add
 exec /sbin/udevadm settle
+sv stop udevinit
