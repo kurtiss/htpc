@@ -1,6 +1,10 @@
 #!/bin/sh
 
+# from http://www.linuxfromscratch.org/lfs/view/development/scripts/apds05.html
+
 sv start udevd || exit 1
-/sbin/udevadm trigger --action=add
+/sbin/udevadm trigger --action=add --type=subsystems
+/sbin/udevadm trigger --action=add --type=devices
+/sbin/udevadm trigger --action=change --type=devices
 /sbin/udevadm settle
 exec sleep infinity
