@@ -1,37 +1,28 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from urllib import quote, unquote
-from module.plugins.Hoster import Hoster
+from urllib import unquote
 
-class RehostTo(Hoster):
-    __name__ = "RehostTo"
-    __version__ = "0.13"
-    __type__ = "hoster"
-    __pattern__ = r"https?://.*rehost.to\..*"
-    __description__ = """rehost.com hoster plugin"""
-    __author_name__ = ("RaNaN")
-    __author_mail__ = ("RaNaN@pyload.org")
+from module.plugins.internal.MultiHoster import MultiHoster, create_getInfo
 
-    def getFilename(self, url):
-        return unquote(url.rsplit("/", 1)[1])
 
-    def setup(self):
-        self.chunkLimit = 1
-        self.resumeDownload = True
+class RehostTo(MultiHoster):
+    __name__    = "RehostTo"
+    __type__    = "hoster"
+    __version__ = "0.21"
 
-    def process(self, pyfile):
-        if not self.account:
-            self.logError(_("Please enter your %s account or deactivate this plugin") % "rehost.to")
-            self.fail("No rehost.to account provided")
+    __pattern__ = r'https?://.*rehost\.to\..+'
 
-        data = self.account.getAccountInfo(self.user)
-        long_ses = data["long_ses"]
+    __description__ = """Rehost.com multi-hoster plugin"""
+    __license__     = "GPLv3"
+    __authors__     = [("RaNaN", "RaNaN@pyload.org")]
 
-        self.logDebug("Rehost.to: Old URL: %s" % pyfile.url)
-        new_url = "http://rehost.to/process_download.php?user=cookie&pass=%s&dl=%s" % (long_ses, quote(pyfile.url, ""))
 
-        #raise timeout to 2min
-        self.req.setOption("timeout", 120)
+    def handlePremium(self, pyfile):
+        self.download("http://rehost.to/process_download.php",
+                      get={'user': "cookie",
+                           'pass': self.account.getAccountInfo(self.user)['session'],
+                           'dl'  : pyfile.url},
+                      disposition=True)
 
-        self.download(new_url, disposition=True)
+
+getInfo = create_getInfo(RehostTo)

@@ -1,35 +1,45 @@
 # -*- coding: utf-8 -*-
 
 import re
-import _strptime
-import time
+
+from time import mktime, strptime
 
 from module.plugins.Account import Account
 
 
 class DebridItaliaCom(Account):
-    __name__ = "DebridItaliaCom"
-    __version__ = "0.1"
-    __type__ = "account"
-    __description__ = """debriditalia.com account plugin"""
-    __author_name__ = ("stickell")
-    __author_mail__ = ("l.stickell@yahoo.it")
+    __name__    = "DebridItaliaCom"
+    __type__    = "account"
+    __version__ = "0.13"
 
-    WALID_UNTIL_PATTERN = r"Premium valid till: (?P<D>[^|]+) \|"
+    __description__ = """Debriditalia.com account plugin"""
+    __license__     = "GPLv3"
+    __authors__     = [("stickell", "l.stickell@yahoo.it"),
+                       ("Walter Purcaro", "vuolter@gmail.com")]
+
+
+    WALID_UNTIL_PATTERN = r'Premium valid till: (.+?) \|'
+
 
     def loadAccountInfo(self, user, req):
-        if 'Account premium not activated' in self.html:
-            return {"premium": False, "validuntil": None, "trafficleft": None}
+        info = {"premium": False, "validuntil": None, "trafficleft": None}
+        html = req.load("http://debriditalia.com/")
 
-        m = re.search(self.WALID_UNTIL_PATTERN, self.html)
-        if m:
-            validuntil = int(time.mktime(time.strptime(m.group('D'), "%d/%m/%Y %H:%M")))
-            return {"premium": True, "validuntil": validuntil, "trafficleft": -1}
-        else:
-            self.logError('Unable to retrieve account information - Plugin may be out of date')
+        if 'Account premium not activated' not in html:
+            m = re.search(self.WALID_UNTIL_PATTERN, html)
+            if m:
+                validuntil = mktime(strptime(m.group(1), "%d/%m/%Y %H:%M"))
+                info = {"premium": True, "validuntil": validuntil, "trafficleft": -1}
+            else:
+                self.logError(_("Unable to retrieve account information"))
+
+        return info
+
 
     def login(self, user, data, req):
-        self.html = req.load("http://debriditalia.com/login.php",
-                             get={"u": user, "p": data["password"]})
-        if 'NO' in self.html:
+        html = req.load("http://debriditalia.com/login.php",
+                        get={'u': user, 'p': data['password']},
+                        decode=True)
+
+        if 'NO' in html:
             self.wrongPassword()

@@ -1,115 +1,93 @@
-#!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
 import re
+
 from urllib import unquote
-from module.plugins.internal.SimpleHoster import SimpleHoster, create_getInfo
+
 from module.plugins.internal.CaptchaService import ReCaptcha
+from module.plugins.internal.SimpleHoster import SimpleHoster, create_getInfo
 
 
 class DepositfilesCom(SimpleHoster):
-    __name__ = "DepositfilesCom"
-    __type__ = "hoster"
-    __pattern__ = r"https?://[\w\.]*?(depositfiles\.com|dfiles\.(eu|ru))(/\w{1,3})?/files/[\w]+"
-    __version__ = "0.46"
-    __description__ = """Depositfiles.com Download Hoster"""
-    __author_name__ = ("spoob", "zoidberg")
-    __author_mail__ = ("spoob@pyload.org", "zoidberg@mujmail.cz")
+    __name__    = "DepositfilesCom"
+    __type__    = "hoster"
+    __version__ = "0.55"
 
-    FILE_SIZE_PATTERN = r': <b>(?P<S>[0-9.]+)&nbsp;(?P<U>[kKMG])i?B</b>'
-    FILE_NAME_PATTERN = r'<script type="text/javascript">eval\( unescape\(\'(?P<N>.*?)\''
-    FILE_OFFLINE_PATTERN = r'<span class="html_download_api-not_exists"></span>'
-    FILE_URL_REPLACEMENTS = [(r"\.com(/.*?)?/files", ".com/en/files"), (r"\.html$", "")]
-    FILE_NAME_REPLACEMENTS = [(r'\%u([0-9A-Fa-f]{4})', lambda m: unichr(int(m.group(1), 16))),
-                              (r'.*<b title="(?P<N>[^"]+).*', "\g<N>" )]
+    __pattern__ = r'https?://(?:www\.)?(depositfiles\.com|dfiles\.(eu|ru))(/\w{1,3})?/files/(?P<ID>\w+)'
+    __config__  = [("use_premium", "bool", "Use premium account if available", True)]
 
-    RECAPTCHA_PATTERN = r"Recaptcha.create\('([^']+)'"
-    DOWNLOAD_LINK_PATTERN = r'<form id="downloader_file_form" action="(http://.+?\.(dfiles\.eu|depositfiles\.com)/.+?)" method="post"'
+    __description__ = """Depositfiles.com hoster plugin"""
+    __license__     = "GPLv3"
+    __authors__     = [("spoob", "spoob@pyload.org"),
+                       ("zoidberg", "zoidberg@mujmail.cz"),
+                       ("Walter Purcaro", "vuolter@gmail.com")]
 
-    def handleFree(self):
-        self.html = self.load(self.pyfile.url, post={"gateway_result": "1"}, cookies=True)
-        if re.search(self.FILE_OFFLINE_PATTERN, self.html):
-            self.offline()
 
-        if re.search(r'File is checked, please try again in a minute.', self.html) is not None:
-            self.logInfo("DepositFiles.com: The file is being checked. Waiting 1 minute.")
-            self.setWait(61)
-            self.wait()
-            self.retry()
+    NAME_PATTERN    = r'<script type="text/javascript">eval\( unescape\(\'(?P<N>.*?)\''
+    SIZE_PATTERN    = r': <b>(?P<S>[\d.,]+)&nbsp;(?P<U>[\w^_]+)</b>'
+    OFFLINE_PATTERN = r'<span class="html_download_api-not_exists"></span>'
 
-        wait = re.search(r'html_download_api-limit_interval\">(\d+)</span>', self.html)
-        if wait:
-            wait_time = int(wait.group(1))
-            self.logInfo("%s: Traffic used up. Waiting %d seconds." % (self.__name__, wait_time))
-            self.setWait(wait_time)
-            self.wantReconnect = True
-            self.wait()
-            self.retry()
+    NAME_REPLACEMENTS = [(r'\%u([0-9A-Fa-f]{4})', lambda m: unichr(int(m.group(1), 16))),
+                         (r'.*<b title="(?P<N>.+?)".*', "\g<N>")]
+    URL_REPLACEMENTS  = [(__pattern__ + ".*", "https://dfiles.eu/files/\g<ID>")]
 
-        wait = re.search(r'>Try in (\d+) minutes or use GOLD account', self.html)
-        if wait:
-            wait_time = int(wait.group(1))
-            self.logInfo("%s: All free slots occupied. Waiting %d minutes." % (self.__name__, wait_time))
-            self.setWait(wait_time * 60, False)
+    COOKIES = [("dfiles.eu", "lang_current", "en")]
 
-        wait = re.search(r'Please wait (\d+) sec', self.html)
-        if wait:
-            self.setWait(int(wait.group(1)))
+    WAIT_PATTERN = r'(?:download_waiter_remain">|html_download_api-limit_interval">|>Please wait|>Try in).+'
+    ERROR_PATTER = r'File is checked, please try again in a minute'
 
-        found = re.search(r"var fid = '(\w+)';", self.html)
-        if not found:
+    LINK_FREE_PATTERN    = r'<form id="downloader_file_form" action="(http://.+?\.(dfiles\.eu|depositfiles\.com)/.+?)" method="post"'
+    LINK_PREMIUM_PATTERN = r'class="repeat"><a href="(.+?)"'
+    LINK_MIRROR_PATTERN  = r'class="repeat_mirror"><a href="(.+?)"'
+
+
+    def handleFree(self, pyfile):
+        self.html = self.load(pyfile.url, post={'gateway_result': "1"})
+
+        self.checkErrors()
+
+        m = re.search(r"var fid = '(\w+)';", self.html)
+        if m is None:
             self.retry(wait_time=5)
-        params = {'fid': found.group(1)}
+        params = {'fid': m.group(1)}
         self.logDebug("FID: %s" % params['fid'])
 
-        captcha_key = '6LdRTL8SAAAAAE9UOdWZ4d0Ky-aeA7XfSqyWDM2m'
-        found = re.search(self.RECAPTCHA_PATTERN, self.html)
-        if found:
-            captcha_key = found.group(1)
-        self.logDebug("CAPTCHA_KEY: %s" % captcha_key)
+        self.checkErrors()
 
-        self.wait()
         recaptcha = ReCaptcha(self)
+        captcha_key = recaptcha.detect_key()
+        if captcha_key is None:
+            return
 
-        for i in range(5):
-            self.html = self.load("http://depositfiles.com/get_file.php", get=params)
+        self.html = self.load("https://dfiles.eu/get_file.php", get=params)
 
-            if '<input type=button value="Continue" onclick="check_recaptcha' in self.html:
-                if not captcha_key:
-                    self.parseError('Captcha key')
-                if 'response' in params:
-                    self.invalidCaptcha()
-                params['challenge'], params['response'] = recaptcha.challenge(captcha_key)
-                self.logDebug(params)
-                continue
+        if '<input type=button value="Continue" onclick="check_recaptcha' in self.html:
+            params['response'], params['challenge'] = recaptcha.challenge(captcha_key)
+            self.html = self.load("https://dfiles.eu/get_file.php", get=params)
 
-            found = re.search(self.DOWNLOAD_LINK_PATTERN, self.html)
-            if found:
-                if 'response' in params:
-                    self.correctCaptcha()
-                link = unquote(found.group(1))
-                self.logDebug("LINK: %s" % link)
-                break
-            else:
-                self.parseError('Download link')
-        else:
-            self.fail('No valid captcha response received')
+        m = re.search(self.LINK_FREE_PATTERN, self.html)
+        if m:
+            self.link = unquote(m.group(1))
 
-        try:
-            self.download(link, disposition=True)
-        except:
-            self.retry(wait_time=60)
 
-    def handlePremium(self):
+    def handlePremium(self, pyfile):
         if '<span class="html_download_api-gold_traffic_limit">' in self.html:
-            self.logWarning("Download limit reached")
-            self.retry(25, 3600, "Download limit reached")
+            self.logWarning(_("Download limit reached"))
+            self.retry(25, 60 * 60, "Download limit reached")
+
         elif 'onClick="show_gold_offer' in self.html:
             self.account.relogin(self.user)
             self.retry()
-        link = unquote(
-            re.search('<div id="download_url">\s*<a href="(http://.+?\.depositfiles.com/.+?)"', self.html).group(1))
-        self.download(link, disposition=True)
+
+        else:
+            link   = re.search(self.LINK_PREMIUM_PATTERN, self.html)
+            mirror = re.search(self.LINK_MIRROR_PATTERN, self.html)
+
+            if link:
+                self.link = link.group(1)
+
+            elif mirror:
+                self.link = mirror.group(1)
 
 
 getInfo = create_getInfo(DepositfilesCom)

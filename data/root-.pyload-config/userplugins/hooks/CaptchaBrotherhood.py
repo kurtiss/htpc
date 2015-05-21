@@ -1,83 +1,87 @@
 # -*- coding: utf-8 -*-
-"""
-    This program is free software; you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation; either version 3 of the License,
-    or (at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
-    See the GNU General Public License for more details.
-
-    You should have received a copy of the GNU General Public License
-    along with this program; if not, see <http://www.gnu.org/licenses/>.
-
-    @author: mkaay, RaNaN, zoidberg
-"""
 from __future__ import with_statement
 
-from thread import start_new_thread
-
-import pycurl
 import StringIO
-from urllib import urlencode
+import pycurl
+
+try:
+    from PIL import Image
+except ImportError:
+    import Image
+
 from time import sleep
-import Image
+from urllib import urlencode
 
 from module.network.RequestFactory import getURL, getRequest
-from module.network.HTTPRequest import BadHeader
-from module.plugins.Hook import Hook
+from module.plugins.Hook import Hook, threaded
+
 
 class CaptchaBrotherhoodException(Exception):
+
     def __init__(self, err):
         self.err = err
+
 
     def getCode(self):
         return self.err
 
+
     def __str__(self):
         return "<CaptchaBrotherhoodException %s>" % self.err
+
 
     def __repr__(self):
         return "<CaptchaBrotherhoodException %s>" % self.err
 
+
 class CaptchaBrotherhood(Hook):
-    __name__ = "CaptchaBrotherhood"
-    __version__ = "0.04"
-    __description__ = """send captchas to CaptchaBrotherhood.com"""
-    __config__ = [("activated", "bool", "Activated", False),
-                  ("username", "str", "Username", ""),
+    __name__    = "CaptchaBrotherhood"
+    __type__    = "hook"
+    __version__ = "0.08"
+
+    __config__ = [("username", "str", "Username", ""),
                   ("force", "bool", "Force CT even if client is connected", False),
-                  ("passkey", "password", "Password", ""),]
-    __author_name__ = ("RaNaN", "zoidberg")
-    __author_mail__ = ("RaNaN@pyload.org", "zoidberg@mujmail.cz")
-    
+                  ("passkey", "password", "Password", "")]
+
+    __description__ = """Send captchas to CaptchaBrotherhood.com"""
+    __license__     = "GPLv3"
+    __authors__     = [("RaNaN", "RaNaN@pyload.org"),
+                       ("zoidberg", "zoidberg@mujmail.cz")]
+
+
     API_URL = "http://www.captchabrotherhood.com/"
 
+
+    #@TODO: Remove in 0.4.10
+    def initPeriodical(self):
+        pass
+
+
     def setup(self):
-        self.info = {}
+        self.info = {}  #@TODO: Remove in 0.4.10
+
 
     def getCredits(self):
-        response = getURL(self.API_URL + "askCredits.aspx",
-                          get = {"username": self.getConfig("username"),
-                                 "password": self.getConfig("passkey")})
-        if not response.startswith("OK"):
-            raise CaptchaBrotherhoodException(response)
+        res = getURL(self.API_URL + "askCredits.aspx",
+                     get={"username": self.getConfig("username"), "password": self.getConfig("passkey")})
+        if not res.startswith("OK"):
+            raise CaptchaBrotherhoodException(res)
         else:
-            credits = int(response[3:])
+            credits = int(res[3:])
             self.logInfo(_("%d credits left") % credits)
-            self.info["credits"] = credits
+            self.info['credits'] = credits
             return credits
 
-    def submit(self, captcha, captchaType="file", match=None):               
+
+    def submit(self, captcha, captchaType="file", match=None):
         try:
             img = Image.open(captcha)
             output = StringIO.StringIO()
             self.logDebug("CAPTCHA IMAGE", img, img.format, img.mode)
             if img.format in ("GIF", "JPEG"):
                 img.save(output, img.format)
-            else:    
+            else:
                 if img.mode != "RGB":
                     img = img.convert("RGB")
                 img.save(output, "JPEG")
@@ -85,57 +89,57 @@ class CaptchaBrotherhood(Hook):
             output.close()
         except Exception, e:
             raise CaptchaBrotherhoodException("Reading or converting captcha image failed: %s" % e)
-        
+
         req = getRequest()
 
-        url = "%ssendNewCaptcha.aspx?%s" % (self.API_URL, 
-                   urlencode({"username": self.getConfig("username"),
-                              "password": self.getConfig("passkey"),
-                              "captchaSource": "pyLoad",
-                              "timeout": "80"})
-                   )
+        url = "%ssendNewCaptcha.aspx?%s" % (self.API_URL,
+                                            urlencode({'username'     : self.getConfig("username"),
+                                                       'password'     : self.getConfig("passkey"),
+                                                       'captchaSource': "pyLoad",
+                                                       'timeout'      : "80"}))
 
         req.c.setopt(pycurl.URL, url)
         req.c.setopt(pycurl.POST, 1)
         req.c.setopt(pycurl.POSTFIELDS, data)
-        req.c.setopt(pycurl.HTTPHEADER, [ "Content-Type: text/html" ])        
+        req.c.setopt(pycurl.HTTPHEADER, ["Content-Type: text/html"])
 
         try:
             req.c.perform()
-            response = req.getResponse()
+            res = req.getResponse()
         except Exception, e:
             raise CaptchaBrotherhoodException("Submit captcha image failed")
-            
+
         req.close()
 
-        if not response.startswith("OK"):
-            raise CaptchaBrotherhoodException(response[1])
-       
-        ticket = response[3:]
-        
-        for i in range(15):
+        if not res.startswith("OK"):
+            raise CaptchaBrotherhoodException(res[1])
+
+        ticket = res[3:]
+
+        for _i in xrange(15):
             sleep(5)
-            response = self.get_api("askCaptchaResult", ticket)
-            if response.startswith("OK-answered"):
-                return ticket, response[12:] 
+            res = self.api_response("askCaptchaResult", ticket)
+            if res.startswith("OK-answered"):
+                return ticket, res[12:]
 
         raise CaptchaBrotherhoodException("No solution received in time")
 
-    def get_api(self, api, ticket):
-        response = getURL("%s%s.aspx" % (self.API_URL, api), 
+
+    def api_response(self, api, ticket):
+        res = getURL("%s%s.aspx" % (self.API_URL, api),
                           get={"username": self.getConfig("username"),
                                "password": self.getConfig("passkey"),
-                               "captchaID": ticket}
-                          )
-        if not response.startswith("OK"):
-            raise CaptchaBrotherhoodException("Unknown response: %s" % response)
-        
-        return response
+                               "captchaID": ticket})
+        if not res.startswith("OK"):
+            raise CaptchaBrotherhoodException("Unknown response: %s" % res)
+
+        return res
+
 
     def newCaptchaTask(self, task):
         if "service" in task.data:
             return False
-            
+
         if not task.isTextual():
             return False
 
@@ -149,15 +153,18 @@ class CaptchaBrotherhood(Hook):
             task.handler.append(self)
             task.data['service'] = self.__name__
             task.setWaiting(100)
-            start_new_thread(self.processCaptcha, (task,))
+            self._processCaptcha(task)
         else:
-            self.logInfo("Your CaptchaBrotherhood Account has not enough credits")
+            self.logInfo(_("Your CaptchaBrotherhood Account has not enough credits"))
+
 
     def captchaInvalid(self, task):
         if task.data['service'] == self.__name__ and "ticket" in task.data:
-            response = self.get_api("complainCaptcha", task.data['ticket'])
+            res = self.api_response("complainCaptcha", task.data['ticket'])
 
-    def processCaptcha(self, task):
+
+    @threaded
+    def _processCaptcha(self, task):
         c = task.captchaFile
         try:
             ticket, result = self.submit(c)
@@ -165,5 +172,5 @@ class CaptchaBrotherhood(Hook):
             task.error = e.getCode()
             return
 
-        task.data["ticket"] = ticket
+        task.data['ticket'] = ticket
         task.setResult(result)

@@ -1,17 +1,18 @@
 # -*- coding: utf-8 -*-
-from module.plugins.hoster.XFileSharingPro import XFileSharingPro, create_getInfo
 
-class BillionuploadsCom(XFileSharingPro):
-    __name__ = "BillionuploadsCom"
-    __type__ = "hoster"
-    __pattern__ = r"http://(?:\w*\.)*?billionuploads.com/\w{12}"
-    __version__ = "0.01"
-    __description__ = """billionuploads.com hoster plugin"""
-    __author_name__ = ("zoidberg")
-    __author_mail__ = ("zoidberg@mujmail.cz")
+from module.plugins.internal.DeadHoster import DeadHoster, create_getInfo
 
-    FILE_NAME_PATTERN = r'<b>Filename:</b>(?P<N>.*?)<br>'
-    FILE_SIZE_PATTERN = r'<b>Size:</b>(?P<S>.*?)<br>'
-    HOSTER_NAME = "billionuploads.com"
+
+class BillionuploadsCom(DeadHoster):
+    __name__    = "BillionuploadsCom"
+    __type__    = "hoster"
+    __version__ = "0.06"
+
+    __pattern__ = r'http://(?:www\.)?billionuploads\.com/\w{12}'
+
+    __description__ = """Billionuploads.com hoster plugin"""
+    __license__     = "GPLv3"
+    __authors__     = [("zoidberg", "zoidberg@mujmail.cz")]
+
 
 getInfo = create_getInfo(BillionuploadsCom)
