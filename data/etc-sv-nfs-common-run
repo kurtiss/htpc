@@ -1,0 +1,22 @@
+#!/bin/bash
+
+sv start networking || exit 1
+sv start rpcbind || exit 1
+
+. /etc/sv/nfs-common/common
+
+echo "Starting $DESC"
+
+if [ "$NEED_STATD" = yes ]; then
+  sv start statd || exit 1
+fi
+
+if [ "$NEED_IDMAPD" = yes ]; then
+  sv start idmapd || exit 1
+fi
+
+if [ "$NEED_GSSD" = yes ]; then
+  sv start gssd || exit 1
+fi
+
+exec sleep infinity

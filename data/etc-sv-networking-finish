@@ -1,0 +1,45 @@
+#!/bin/sh -e
+
+check_network_file_systems() {
+  [ -e /proc/mounts ] || return 0
+
+  if [ -e /etc/iscsi/iscsi.initramfs ]; then
+    echo "not deconfiguring network interfaces: iSCSI root is mounted."
+    exit 0
+  fi
+
+  while read DEV MTPT FSTYPE REST; do
+    case $DEV in
+      /dev/nbd*|/dev/nd[a-z]*|/dev/etherd/e*)
+        echo "not deconfiguring network interfaces: network devices still mounted."
+        exit 0
+      ;;
+    esac
+
+    case $FSTYPE in
+      nfs|nfs4|smbfs|ncp|ncpfs|cifs|coda|ocfs2|gfs|pvfs|pvfs2|fuse.httpfs|fuse.curlftpfs)
+        echo "not deconfiguring network interfaces: network file systems still mounted."
+        exit 0
+      ;;
+    esac
+  done < /proc/mounts
+}
+
+check_network_swap() {
+  [ -e /proc/swaps ] || return 0
+
+  while read DEV MTPT FSTYPE REST; do
+    case $DEV in
+      /dev/nbd*|/dev/nd[a-z]*|/dev/etherd/e*)
+        echo "not deconfiguring network interfaces: network swap still mounted."
+        exit 0
+      ;;
+    esac
+  done < /proc/swaps
+}
+
+check_network_file_systems
+check_network_swap
+
+echo "Deconfiguring network interfaces"
+ifdown -a --exclude=lo

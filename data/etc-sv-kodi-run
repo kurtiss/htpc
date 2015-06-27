@@ -1,0 +1,18 @@
+#!/bin/sh
+
+sv start udevinit || exit 1
+
+DESC="kodi"
+STARTAS=/usr/lib/kodi/kodi.bin
+STARTAS_ARGS=""
+GEOMETRY=/var/run/kodi.fbset
+USER=kodi
+
+# Exit if the package is not installed
+[ -x "$STARTAS" ] || exit 0
+
+fbset --show | grep geometry | cut -d' ' -f 6- > $GEOMETRY
+chgrp video /dev/vchiq
+chmod 660 /dev/vchiq
+
+exec /sbin/setuser "$USER" "$STARTAS" $STARTAS_ARGS

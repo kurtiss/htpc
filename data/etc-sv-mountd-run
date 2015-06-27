@@ -1,0 +1,5 @@
+#!/bin/bash
+
+. /etc/sv/nfs-kernel-server/common
+
+exec $PREFIX/sbin/rpc.mountd

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+DESC="NFS kernel daemon"
+PREFIX=/usr
+PROCNFSD_MOUNTPOINT=/proc/fs/nfsd

@@ -1,0 +1,12 @@
+#!/bin/bash
+
+sv start networking || exit 1
+sv start rpcbind || exit 1
+
+. /etc/sv/nfs-common/common
+
+do_modprobe sunrpc
+do_modprobe nfs
+do_modprobe nfsd
+
+exec /usr/bin/rpc.imapd

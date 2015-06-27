@@ -1,0 +1,12 @@
+#!/bin/bash
+
+sv start networking || exit 1
+sv start rpcbind || exit 1
+
+. /etc/sv/nfs-common/common
+
+mkdir -p /etc/sv/statd/supervise
+touch /etc/sv/statd/supervise/pid
+ln -s /etc/sv/statd/supervise/pid /run/sendsigs.omit.d/statd
+
+exec $PREFIX/sbin/rpc.statd $STATDOPTS

@@ -1,0 +1,28 @@
+#!/bin/bash
+
+. /etc/sv/nfs-common/common
+
+do_umount() {
+  if mountpoint -q "$1"
+  then
+    umount "$1"
+  fi
+  return 0
+}
+
+if [ "$NEED_GSSD" = yes ]
+then
+  sv stop gssd || exit 1
+fi
+
+if [ "$NEED_IDMAPD" = yes ]
+then
+  sv stop idmapd || exit 1
+fi
+
+if [ "$NEED_STATD" = yes ]
+then
+  sv stop statd || exit 1
+fi
+
+do_umount $PIPEFS_MOUNTPOINT 2>/dev/null || true

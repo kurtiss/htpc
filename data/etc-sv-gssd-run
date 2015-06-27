@@ -1,0 +1,20 @@
+#!/bin/bash
+
+sv start networking || exit 1
+sv start rpcbind || exit 1
+
+. /etc/sv/nfs-common/common
+
+do_modprobe sunrpc
+do_modprobe nfs
+do_modprobe nfsd
+do_modprobe rpcsec_gss_krb5
+
+# we need this available; better to fail now than
+# mysteriously on the first mount
+if ! grep -q -E '^nfs[   ]' /etc/services; then
+  echo "broken /etc/services, please see /usr/share/doc/nfs-common/README.Debian.nfsv4"
+  exit 1
+fi
+
+exec /usr/sbin/rpc.gssd $RPCGSSDOPTS

@@ -1,0 +1,91 @@
+#!/bin/bash
+
+sv start nfs-common || exit 1
+
+. /etc/sv/nfs-kernel-server/common
+
+# Exit if required binaries are missing.
+[ -x $PREFIX/sbin/rpc.nfsd    ] || exit 0
+[ -x $PREFIX/sbin/rpc.mountd  ] || exit 0
+[ -x $PREFIX/sbin/exportfs    ] || exit 0
+
+# Read config
+RPCNFSDCOUNT=8
+RPCNFSDPRIORITY=0
+RPCMOUNTDOPTS=
+RPCSVCGSSDOPTS=
+
+do_modprobe() {
+    if [ -x /sbin/modprobe -a -f /proc/modules ]
+    then
+        modprobe -q "$1" || true
+    fi
+}
+
+do_mount() {
+    if ! grep -E -qs "$1\$" /proc/filesystems
+    then
+	return 1
+    fi
+    if ! mountpoint -q "$2"
+    then
+	mount -t "$1" "$1" "$2"
+	return
+    fi
+    return 0
+}
+
+export_files="/etc/exports"
+for file in /etc/exports.d/*.exports ; do
+  if [ -f "$file" ]; then
+    export_files="$export_files $file"
+  fi
+done
+
+if [ -f /etc/exports ] && grep -q '^[[:space:]]*[^#]*/' $export_files
+then
+  do_modprobe nfsd
+
+  # See if our running kernel supports the NFS kernel server
+  if ! grep -E -qs "[[:space:]]nfsd\$" /proc/filesystems; then
+    echo "Not starting $DESC: no support in current kernel."
+    exit 0
+  fi
+
+  do_mount nfsd $PROCNFSD_MOUNTPOINT
+  echo "Exporting directories for $DESC..."
+  $PREFIX/sbin/exportfs -r
+
+  echo "Starting $DESC"
+
+  # See if rpcbind is running
+  /usr/sbin/rpcinfo -p >/dev/null 2>&1
+  RET=$?
+  if [ $RET != 0 ]; then
+    echo
+    log_warning_msg "Not starting: portmapper is not running"
+    exit 0
+  fi
+
+  exec $PREFIX/sbin/rpc.nfsd $RPCNFSDCOUNT &
+
+  # make sure 127.0.0.1 is a valid source for requests
+  ClearAddr=
+  if [ -f /proc/net/rpc/auth.unix.ip/channel ]; then
+    fgrep -qs 127.0.0.1 /proc/net/rpc/auth.unix.ip/content || {
+      echo "nfsd 127.0.0.1 2147483647 localhost" >/proc/net/rpc/auth.unix.ip/channel
+      ClearAddr=yes
+    }
+  fi
+
+  $PREFIX/bin/rpcinfo -u localhost nfs 3 >/dev/null 2>&1 ||
+    RPCMOUNTDOPTS="$RPCMOUNTDOPTS --no-nfs-version 3"
+
+  [ -z "$ClearAddr" ] || echo "nfsd 127.0.0.1 1" >/proc/net/rpc/auth.unix.ip/channel
+
+  sv start mountd || exit 1
+  fg
+
+else
+  echo "Not starting $DESC: no exports."
+fi

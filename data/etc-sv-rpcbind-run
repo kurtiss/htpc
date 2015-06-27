@@ -1,0 +1,44 @@
+#!/bin/sh
+
+sv start networking || exit 1
+
+OPTIONS="-w"
+STATEDIR=/run/rpcbind
+
+if [ -f /etc/default/rpcbind ]; then
+  . /etc/default/rpcbind
+elif [ -f /etc/rpcbind.conf ]; then
+  . /etc/rpcbind.conf
+fi
+
+if [ -f /etc/default/rpcbind ]; then
+  . /etc/default/rpcbind
+elif [ -f /etc/rpcbind.conf ]; then
+	. /etc/rpcbind.conf
+fi
+
+if [ ! -d $STATEDIR ]; then
+  mkdir $STATEDIR
+fi
+
+if [ ! -O $STATEDIR ] ; then
+  echo "$STATEDIR not owned by root"
+  exit 1
+fi
+
+if [ ! -f $STATEDIR/rpcbind.xdr ]; then
+  touch $STATEDIR/rpcbind.xdr
+fi
+
+if [ ! -f $STATEDIR/portmap.xdr ]; then
+  touch $STATEDIR/portmap.xdr
+fi
+
+[ -x /sbin/restorecon ] && /sbin/restorecon $STATEDIR/*.xdr
+
+mkdir -p /etc/sv/rpcbind/supervise
+touch /etc/sv/rpcbind/supervise/pid
+ln -sf /etc/sv/rpcbind/supervise/pid /run/sendsigs.omit.d/rpcbind
+
+echo "Starting rpcbind daemon..."
+exec /sbin/rpcbind
