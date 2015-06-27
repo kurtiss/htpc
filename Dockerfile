@@ -152,10 +152,10 @@ RUN chmod +x /etc/sv/mountd/run
 RUN ln -s /etc/sv/mountd /etc/service/mountd
 
 # udevd - init
-RUN mkdir -p /etc/sv/udevd
-ADD data/etc-sv-udevd-run /etc/sv/udevd/run
-RUN chmod +x /etc/sv/udevd/run
-RUN ln -s /etc/sv/udevd /etc/service/udevd
+# RUN mkdir -p /etc/sv/udevd
+# ADD data/etc-sv-udevd-run /etc/sv/udevd/run
+# RUN chmod +x /etc/sv/udevd/run
+# RUN ln -s /etc/sv/udevd /etc/service/udevd
 
 # configure kodi
 RUN sudo -u kodi sh -c "mkdir -p /home/kodi/.kodi/userdata"
