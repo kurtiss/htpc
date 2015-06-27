@@ -97,52 +97,52 @@ RUN chmod +x /etc/sv/networking/finish
 RUN ln -s /etc/sv/networking /etc/service/networking
 
 # rpcbind
-RUN mkdir -p /etc/sv/rpcbind
-ADD data/etc-sv-rpcbind-run /etc/sv/rpcbind/run
-RUN chmod +x /etc/sv/rpcbind/run
-RUN ln -s /etc/sv/rpcbind /etc/service/rpcbind
+# RUN mkdir -p /etc/sv/rpcbind
+# ADD data/etc-sv-rpcbind-run /etc/sv/rpcbind/run
+# RUN chmod +x /etc/sv/rpcbind/run
+# RUN ln -s /etc/sv/rpcbind /etc/service/rpcbind
 
 # statd
-RUN mkdir -p /etc/sv/statd
-RUN touch /etc/sv/statd/down
-ADD data/etc-sv-statd-run /etc/sv/statd/run
-ADD data/etc-sv-statd-finish /etc/sv/statd/finish
-RUN chmod +x /etc/sv/statd/run
-RUN chmod +x /etc/sv/statd/finish
-RUN ln -s /etc/sv/statd /etc/service/statd
+# RUN mkdir -p /etc/sv/statd
+# RUN touch /etc/sv/statd/down
+# ADD data/etc-sv-statd-run /etc/sv/statd/run
+# ADD data/etc-sv-statd-finish /etc/sv/statd/finish
+# RUN chmod +x /etc/sv/statd/run
+# RUN chmod +x /etc/sv/statd/finish
+# RUN ln -s /etc/sv/statd /etc/service/statd
 
 # idmapd
-RUN mkdir -p /etc/sv/idmapd
-RUN touch /etc/sv/idmapd/down
-ADD data/etc-sv-idmapd-run /etc/sv/idmapd/run
-RUN chmod +x /etc/sv/idmapd/run
-RUN ln -s /etc/sv/idmapd /etc/service/idmapd
+# RUN mkdir -p /etc/sv/idmapd
+# RUN touch /etc/sv/idmapd/down
+# ADD data/etc-sv-idmapd-run /etc/sv/idmapd/run
+# RUN chmod +x /etc/sv/idmapd/run
+# RUN ln -s /etc/sv/idmapd /etc/service/idmapd
 
 # gssd
-RUN mkdir -p /etc/sv/gssd
-RUN touch /etc/sv/gssd/down
-ADD data/etc-sv-gssd-run /etc/sv/gssd/run
-RUN chmod +x /etc/sv/gssd/run
-RUN ln -s /etc/sv/gssd /etc/service/gssd
+# RUN mkdir -p /etc/sv/gssd
+# RUN touch /etc/sv/gssd/down
+# ADD data/etc-sv-gssd-run /etc/sv/gssd/run
+# RUN chmod +x /etc/sv/gssd/run
+# RUN ln -s /etc/sv/gssd /etc/service/gssd
 
 # nfs-common
-RUN mkdir -p /etc/sv/nfs-common
-RUN touch /etc/sv/nfs-common/down
-ADD data/etc-sv-nfs-common-common /etc/sv/nfs-common/common
-ADD data/etc-sv-nfs-common-run /etc/sv/nfs-common/run
-ADD data/etc-sv-nfs-common-finish /etc/sv/nfs-common/finish
-RUN chmod +x /etc/sv/nfs-common/run
-RUN chmod +x /etc/sv/nfs-common/finish
-RUN ln -s /etc/sv/nfs-common /etc/service/nfs-common
+# RUN mkdir -p /etc/sv/nfs-common
+# RUN touch /etc/sv/nfs-common/down
+# ADD data/etc-sv-nfs-common-common /etc/sv/nfs-common/common
+# ADD data/etc-sv-nfs-common-run /etc/sv/nfs-common/run
+# ADD data/etc-sv-nfs-common-finish /etc/sv/nfs-common/finish
+# RUN chmod +x /etc/sv/nfs-common/run
+# RUN chmod +x /etc/sv/nfs-common/finish
+# RUN ln -s /etc/sv/nfs-common /etc/service/nfs-common
 
 # nfs-kernel-server
-RUN mkdir -p /etc/sv/nfs-kernel-server
-ADD data/etc-sv-nfs-kernel-server-common /etc/sv/nfs-kernel-server/common
-ADD data/etc-sv-nfs-kernel-server-run /etc/sv/nfs-kernel-server/run
-ADD data/etc-sv-nfs-kernel-server-finish /etc/sv/nfs-kernel-server/finish
-RUN chmod +x /etc/sv/nfs-kernel-server/run
-RUN chmod +x /etc/sv/nfs-kernel-server/finish
-RUN ln -s /etc/sv/nfs-kernel-server /etc/service/nfs-kernel-server
+# RUN mkdir -p /etc/sv/nfs-kernel-server
+# ADD data/etc-sv-nfs-kernel-server-common /etc/sv/nfs-kernel-server/common
+# ADD data/etc-sv-nfs-kernel-server-run /etc/sv/nfs-kernel-server/run
+# ADD data/etc-sv-nfs-kernel-server-finish /etc/sv/nfs-kernel-server/finish
+# RUN chmod +x /etc/sv/nfs-kernel-server/run
+# RUN chmod +x /etc/sv/nfs-kernel-server/finish
+# RUN ln -s /etc/sv/nfs-kernel-server /etc/service/nfs-kernel-server
 
 # mountd
 RUN mkdir -p /etc/sv/mountd
