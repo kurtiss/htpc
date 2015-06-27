@@ -1,6 +1,6 @@
 #!/bin/sh
 
-sv start udevinit || exit 1
+# sv start udevinit || exit 1
 
 DESC="kodi"
 STARTAS=/usr/lib/kodi/kodi.bin
