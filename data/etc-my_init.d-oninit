@@ -1,6 +1,6 @@
 #!/bin/sh
 
 envtpl /root/.ssh/authorized_keys.tpl
-envtpl /etc/udev/rules.d/96-usb.rules.tpl
+# envtpl /etc/udev/rules.d/96-usb.rules.tpl
 envtpl /etc/fstab.tpl
 envtpl /root/.pyload/config/pyload.conf.tpl
