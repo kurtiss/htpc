@@ -1,0 +1,3 @@
+#!/bin/sh -e
+
+sv stop udevd-daemon || exit 1

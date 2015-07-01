@@ -1,0 +1,8 @@
+#!/bin/sh -e
+
+# if [ "$(mount | grep 'on /dev type ' | wc -l)" -eq 0 ]; then
+#   mount -t devtmpfs none /dev
+# fi
+
+mount -t devtmpfs none /dev
+exec /sbin/udevd --children-max=2

@@ -154,10 +154,15 @@ RUN chmod +x /etc/sv/mountd/run
 RUN ln -s /etc/sv/mountd /etc/service/mountd
 
 # udevd - init
+RUN mkdir -p /etc/sv/udevd-daemon
+ADD data/etc-sv-udevd-daemon-run /etc/sv/udevd-daemon/run
+RUN chmod +x /etc/sv/udevd-daemon/run
+RUN ln -s /etc/sv/udevd-daemon /etc/service/udevd-daemon
 RUN mkdir -p /etc/sv/udevd
-RUN touch /etc/sv/udevd/down
 ADD data/etc-sv-udevd-run /etc/sv/udevd/run
 RUN chmod +x /etc/sv/udevd/run
+ADD data/etc/sv-udevd-finish /etc/sv/udevd/finish
+RUN chmod +x /etc/sv/udevd/finish
 RUN ln -s /etc/sv/udevd /etc/service/udevd
 
 # configure kodi
